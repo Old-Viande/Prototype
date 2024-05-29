@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 293f1aaa755ffbb4b90ffbef209c4e5e, type: 3}
+  m_Name: ArmorList
+  m_EditorClassIdentifier: 
+  ArmorTypeList:
+  - Name: Cape
+    Damage: 0
+    Defence: 1
+    Speed: 3
+    Range: 0
+    attackType: 0
+    Canshield: 0
+    CanCross: 1
+  - Name: Breastplate
+    Damage: 0
+    Defence: 2
+    Speed: 2
+    Range: 0
+    attackType: 0
+    Canshield: 0
+    CanCross: 0
+  - Name: PlateArmor
+    Damage: 0
+    Defence: 3
+    Speed: 1
+    Range: 0
+    attackType: 0
+    Canshield: 0
+    CanCross: 0

@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Sword",
+    "ObjPath": "Prefab/Object/Pawn",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 10000
+  },
+  {
+    "name": "Spear",
+    "ObjPath": "Prefab/Object/Pawn",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 10001
+  },
+  {
+    "name": "Halberd",
+    "ObjPath": "Prefab/Object/Pawn",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 10002
+  },
+  {
+    "name": "GreatSword",
+    "ObjPath": "Prefab/Object/Pawn",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 10004
+  },
+  {
+    "name": "LongBow",
+    "ObjPath": "Prefab/Object/Pawn",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 10005
+  },
+  {
+    "name": "CrossBow",
+    "ObjPath": "Prefab/Object/Pawn",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 10006
+  },
+  {
+    "name": "Cape",
+    "ObjPath": "",
+    "UIPath": "Prefab/Object/ArmorCard",
+    "ID": 10007
+  },
+  {
+    "name": "Breastplate",
+    "ObjPath": "",
+    "UIPath": "Prefab/Object/ArmorCard",
+    "ID": 10008
+  },
+  {
+    "name": "PlateArmor",
+    "ObjPath": "",
+    "UIPath": "Prefab/Object/ArmorCard",
+    "ID": 10009
+  },
+  {
+    "name": "PawnCard",
+    "ObjPath": "",
+    "UIPath": "Prefab/Object/PawnCard",
+    "ID": 0
+  },
+  {
+    "name": "UniteCard",
+    "ObjPath": "",
+    "UIPath": "Prefab/Object/UniteCard",
+    "ID": 0
+  },
+  {
+    "name": "ArmorCard",
+    "ObjPath": "",
+    "UIPath": "Prefab/Object/ArmorCard",
+    "ID": 0
+  }
+]

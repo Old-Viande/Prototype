@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d60370545c3c4409dedee3a022a7ba, type: 3}
+  m_Name: UniteList
+  m_EditorClassIdentifier: 
+  uniteTypeList:
+  - Name: Sword
+    Damage: 2
+    Defence: 1
+    Speed: 0
+    Range: 1
+    attackType: 1
+    Canshield: 1
+    CanCross: 0
+  - Name: Spear
+    Damage: 3
+    Defence: 1
+    Speed: 0
+    Range: 2
+    attackType: 3
+    Canshield: 1
+    CanCross: 0
+  - Name: Halberd
+    Damage: 3
+    Defence: 1
+    Speed: 0
+    Range: 2
+    attackType: 2
+    Canshield: 1
+    CanCross: 0
+  - Name: GreatSword
+    Damage: 4
+    Defence: 1
+    Speed: 0
+    Range: 1
+    attackType: 7
+    Canshield: 0
+    CanCross: 0
+  - Name: LongBow
+    Damage: 2
+    Defence: 1
+    Speed: 0
+    Range: 4
+    attackType: 5
+    Canshield: 0
+    CanCross: 0
+  - Name: CrossBow
+    Damage: 2
+    Defence: 1
+    Speed: 0
+    Range: 4
+    attackType: 4
+    Canshield: 0
+    CanCross: 0
