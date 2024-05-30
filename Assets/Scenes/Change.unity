@@ -1641,17 +1641,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3974409949714459508, guid: 5a30a52651cba7e408307e6f85ba6d43, type: 3}
-      propertyPath: weatheres.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3974409949714459509, guid: 5a30a52651cba7e408307e6f85ba6d43, type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 3974409949714459519, guid: 5a30a52651cba7e408307e6f85ba6d43, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a30a52651cba7e408307e6f85ba6d43, type: 3}

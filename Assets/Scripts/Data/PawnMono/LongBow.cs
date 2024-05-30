@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class LongBow : BaseAction
 {
@@ -11,7 +12,7 @@ public class LongBow : BaseAction
     protected override void OnEnable()
     {
         base.OnEnable();
-        EventManager.MeleeAttack += Attack;
+        EventManager.RangAttack += Attack;
     }
     // Start is called before the first frame update
     void Start()
@@ -28,7 +29,6 @@ public class LongBow : BaseAction
     private void Attack()
     {
         GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);
-        AttackJudg();
     }
 
     public override void AttackJudg()
@@ -55,6 +55,7 @@ public class LongBow : BaseAction
                 if (targets[i] != null)//最远的目标不为空，则进行攻击
                 {
                     GameManager.Instance.AttackSettlement(this.gameObject, targets[i]);//进行攻击
+                    AnimaSet(targets[i]);
                     break;//跳出循环
                 }
             }
@@ -79,10 +80,20 @@ public class LongBow : BaseAction
                 if (targets[i] != null)//最近的目标不为空，则进行攻击
                 {
                     GameManager.Instance.AttackSettlement(this.gameObject, targets[i]);//进行攻击
+                    AnimaSet(targets[i]);
                     break;//跳出循环
                 }
             }
         }
+    }
+    private void AnimaSet(GameObject target)
+    {
+        Spine2DSkinList spineA = this.GetComponent<Spine2DSkinList>();
+        Spine2DSkinList spineB = target.GetComponent<Spine2DSkinList>();
+        string[] atktracks = new string[] { "Attacks/King_Attack" };
+        string[] targettracks = new string[] { "Hit/Hit" };
+        spineA.SetAnimation(atktracks);
+        spineB.SetAnimation(targettracks);
     }
 
     protected override void OnDisable()

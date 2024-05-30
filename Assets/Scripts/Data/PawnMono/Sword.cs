@@ -27,8 +27,7 @@ public class Sword : BaseAction
 
     private void Attack()
     {
-        GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);
-        
+        GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);  
     }
      public override void AttackJudg()
     {
@@ -46,6 +45,7 @@ public class Sword : BaseAction
             {               
                 target = GameManager.Instance.unitesGridMap.GetValue(x + UniteSave.Range, z);//否则将目标设为攻击目标
                 GameManager.Instance.AttackSettlement(this.gameObject, target);
+                AnimaSet(target);
             }
         }
         else//是防守方
@@ -54,15 +54,25 @@ public class Sword : BaseAction
             {               
                 target = GameManager.Instance.unitesGridMap.GetValue(x - UniteSave.Range, z);//如果是攻击方则将目标设为攻击目标
                 GameManager.Instance.AttackSettlement(this.gameObject, target);
+                AnimaSet(target);
             }          
             else
             {
                 return;//如果是防守方则返回
             }
         }
-       
+        
     }
-
+    private void AnimaSet(GameObject target)
+    {
+        Spine2DSkinList spineA = this.GetComponent<Spine2DSkinList>();
+        Spine2DSkinList spineB= target.GetComponent<Spine2DSkinList>();
+        string[] atktracks = new string[] { "Attacks/Squire_Attack" };
+        string[] targettracks = new string[] { "Hit/Hit" };
+        spineA.SetAnimation(atktracks);
+        spineB.SetAnimation(targettracks);
+        
+    }
     protected override void OnDisable()
     {
         EventManager.MeleeAttack -= Attack;

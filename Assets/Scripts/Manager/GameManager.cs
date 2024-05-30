@@ -293,6 +293,19 @@ public class GameManager : Singleton<GameManager>
 
     #endregion    
     #region 单位攻击顺序安排
+    public void AttackFollowOrder()
+    {
+        List<KeyValuePair<int, GameObject>> attackOrder = AttackSetOrder();
+        for(var i=attackOrder.ToArray().Length-1;i>0;i--)
+        {
+            GameObject obj = attackOrder.ToArray()[i].Value;
+            if (obj != null)//如果单位不为空
+            {
+                obj.GetComponent<BaseAction>().AttackJudg();
+            }          
+        }           
+    }
+
     public List<KeyValuePair<int, GameObject>> AttackSetOrder()
     {
         var sortedList = Attacklis.OrderByDescending(kv => kv.Key) // 按照key的大小进行排序                                

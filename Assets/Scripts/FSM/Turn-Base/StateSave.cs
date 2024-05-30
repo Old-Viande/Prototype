@@ -177,6 +177,7 @@ public class DefenceStartDrawPileState : IState
         StartManager.Instance.OpenDraw();
         StartManager.Instance.SetInfPanel("Welcome to the start of the game, this is the card draw phase, please click on the two middle card piles on the left side to get unit cards " +
             "and armor cards, you can draw eight in total.\r\nAt the end click on the Finish button.");
+        CardDrawFun.Instance.DrawTimes = 8;
     }
 
     public void OnUpdate()

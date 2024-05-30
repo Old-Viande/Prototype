@@ -12,7 +12,8 @@ public class BattleRoundState : IState
     }
     public void OnEnter()
     {
-        StartManager.Instance.SetInfPanel("Place your configured units on the grid of the field, players can only place units within the four columns and three rows on the left side.\r\nPress the done button when you are finish");
+        StartManager.Instance.SetInfPanel("Now the battle begins.");
+        fsm.Delay(5, States.WeatherRound);
     }
 
     public void OnUpdate()
@@ -49,9 +50,6 @@ public class WeatherState : IState
     public void OnUpdate()
     {
         Debug.Log("BattleRoundState OnUpdate");
-        
-
-
     }
 
     public void OnExit()
@@ -68,8 +66,8 @@ public class RangeAttackState : IState
     }
     public void OnEnter()
     {
-      
-        fsm.Delay(4, States.PawnMove);
+        EventManager.OnRangAttack();
+        fsm.Delay(5, States.PawnMove);
     }
 
     public void OnUpdate()
@@ -95,7 +93,7 @@ public class PawnMoveState : IState
         Debug.Log("UnitMoveState OnEnter");
         TextShow.Instance.AddText("UnitMoveState OnEnter");
         TextShow.Instance.AddText("Detection of units that can be moved");
-        fsm.Delay(7, States.MeleeAttack);
+        fsm.Delay(5, States.MeleeAttack);
     }
 
     public void OnUpdate()
@@ -122,7 +120,8 @@ public class MeleeAttackState : IState
         Debug.Log("MeleeAttackState OnEnter");
         TextShow.Instance.AddText("MeleeAttackState OnEnter");
         TextShow.Instance.AddText("Melee units that come into range start attacking");
-        fsm.Delay(4, States.EndRound);
+        EventManager.OnMeleeAttack();
+        fsm.Delay(7, States.EndRound);
     }
 
     public void OnUpdate()
