@@ -50,6 +50,7 @@ public class GameManager : Singleton<GameManager>
     public ObjectPool AttackPawnPool;
     public ObjectPool DefencePawnPool;
     #endregion
+    public ObjectPool abandonedPool;//储存被废弃的单位
     void Start()
     {
         floorGridMap = new GridMap<GameObject>(maxX, maxY, minX, minY, celllong, origenPoint, floorSave);
@@ -62,6 +63,7 @@ public class GameManager : Singleton<GameManager>
         DefenceArmorPool = new ObjectPool();
         AttackPawnPool = new ObjectPool();
         DefencePawnPool = new ObjectPool();
+        abandonedPool = new ObjectPool();
     }
 
     private GameObject floorSave(GridMap<GameObject> map, int x, int z)

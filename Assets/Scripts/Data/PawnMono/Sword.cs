@@ -28,9 +28,9 @@ public class Sword : BaseAction
     private void Attack()
     {
         GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);
-        AttackJudg();
+        
     }
-    public void AttackJudg()
+     public override void AttackJudg()
     {
         GameObject target;
         GameManager.Instance.unitesGridMap.GetGridXZ(this.gameObject.transform.position, out int x, out int z);

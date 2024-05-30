@@ -22,7 +22,7 @@ public class GreatSword : BaseAction
     // Update is called once per frame
     void Update()
     {
-
+       
     }
    
     private void Attack()
@@ -31,7 +31,7 @@ public class GreatSword : BaseAction
         AttackJudg();
     }
 
-    private void AttackJudg()
+    public override void AttackJudg()
     {
         throw new NotImplementedException();
     }

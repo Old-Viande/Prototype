@@ -45,7 +45,10 @@ public class BaseAction : MonoBehaviour
             this.transform.DOMove(target, 2);
         }
     }
+    public virtual void AttackJudg()
+    {
 
+    }
     private void RoundEnd()
     {
         this.GetComponent<PawnData>().Defence = this.GetComponent<PawnData>().Unites.Defence;
