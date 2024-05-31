@@ -25,10 +25,6 @@ public class Sword : BaseAction
 
     }
 
-    private void Attack()
-    {
-        GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);  
-    }
      public override void AttackJudg()
     {
         GameObject target;
@@ -36,7 +32,10 @@ public class Sword : BaseAction
         //判断自身是否是攻击方
         if (isAttacker)//是攻击方
         {
-            
+            if(GameManager.Instance.unitesGridMap.GetValue(x + UniteSave.Range, z) == null)
+            {
+                return;//直接返回
+            }
             if (GameManager.Instance.unitesGridMap.GetValue(x + UniteSave.Range, z).GetComponent<BaseAction>().isAttacker)//判断目标是否是攻击方
             {
                 return;//如果是攻击方则返回
@@ -50,6 +49,10 @@ public class Sword : BaseAction
         }
         else//是防守方
         {
+            if (GameManager.Instance.unitesGridMap.GetValue(x - UniteSave.Range, z) == null)
+            {
+                return;//直接返回
+            }
             if (GameManager.Instance.unitesGridMap.GetValue(x - UniteSave.Range, z).GetComponent<BaseAction>().isAttacker)//判断目标是否是攻击方
             {               
                 target = GameManager.Instance.unitesGridMap.GetValue(x - UniteSave.Range, z);//如果是攻击方则将目标设为攻击目标
@@ -69,8 +72,8 @@ public class Sword : BaseAction
         Spine2DSkinList spineB= target.GetComponent<Spine2DSkinList>();
         string[] atktracks = new string[] { "Attacks/Squire_Attack" };
         string[] targettracks = new string[] { "Hit/Hit" };
-        spineA.SetAnimation(atktracks);
-        spineB.SetAnimation(targettracks);
+        spineA.SetAnimation(atktracks,false);
+        spineB.SetAnimation(targettracks,false);
         
     }
     protected override void OnDisable()

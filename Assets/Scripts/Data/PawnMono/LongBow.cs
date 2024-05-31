@@ -25,11 +25,6 @@ public class LongBow : BaseAction
     {
 
     }
-   
-    private void Attack()
-    {
-        GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);
-    }
 
     public override void AttackJudg()
     {
@@ -41,7 +36,11 @@ public class LongBow : BaseAction
             GameObject[] targets = new GameObject[UniteSave.Range];//创建一个数组用来存储多个目标
             for (var i = UniteSave.Range; i > 0; i--)//循环遍历攻击范围的所有单位，按照距离从远到近的顺序进行目标的添加
             {
-                if (GameManager.Instance.unitesGridMap.GetValue(x + i, z).GetComponent<BaseAction>().isAttacker!)
+                if (GameManager.Instance.unitesGridMap.GetValue(x + i, z) == null)
+                {
+                    continue;//如果目标为空，则跳过此次循环
+                }
+                if (!GameManager.Instance.unitesGridMap.GetValue(x + i, z).GetComponent<BaseAction>().isAttacker)
                 {
                     target = GameManager.Instance.unitesGridMap.GetValue(x + i, z);//如果是防御方则将目标设为攻击目标
                     if (target != null)
@@ -66,6 +65,10 @@ public class LongBow : BaseAction
             GameObject[] targets = new GameObject[UniteSave.Range];//创建一个数组用来存储多个目标
             for (var i = UniteSave.Range; i > 0; i--)//循环遍历攻击范围的所有单位，按照距离从远到近的顺序进行目标的添加
             {
+                if (GameManager.Instance.unitesGridMap.GetValue(x - i, z) == null)
+                {
+                    continue;//如果目标为空，则跳过此次循环
+                }
                 if (GameManager.Instance.unitesGridMap.GetValue(x - i, z).GetComponent<BaseAction>().isAttacker)
                 {
                     target = GameManager.Instance.unitesGridMap.GetValue(x - i, z);//如果是防御方则将目标设为攻击目标
@@ -92,8 +95,8 @@ public class LongBow : BaseAction
         Spine2DSkinList spineB = target.GetComponent<Spine2DSkinList>();
         string[] atktracks = new string[] { "Attacks/King_Attack" };
         string[] targettracks = new string[] { "Hit/Hit" };
-        spineA.SetAnimation(atktracks);
-        spineB.SetAnimation(targettracks);
+        spineA.SetAnimation(atktracks, false);
+        spineB.SetAnimation(targettracks, false);
     }
 
     protected override void OnDisable()

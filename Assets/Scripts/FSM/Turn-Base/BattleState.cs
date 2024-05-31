@@ -13,18 +13,18 @@ public class BattleRoundState : IState
     public void OnEnter()
     {
         StartManager.Instance.SetInfPanel("Now the battle begins.");
+       
         fsm.Delay(5, States.WeatherRound);
     }
 
     public void OnUpdate()
     {
-       
-        
+
     }
 
     public void OnExit()
     {
-        
+
     }
 }
 
@@ -37,24 +37,20 @@ public class WeatherState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("BattleRoundState OnEnter");
-        TextShow.Instance.AddText("WeatherState OnEnter");
+
         GameManager.Instance.RandomWeather();
-        foreach (var item in GameManager.Instance.weatheres)
-        {
-            TextShow.Instance.AddText(item.ToString());
-        }
+
         fsm.Delay(7, States.RangeAttack);
     }
 
     public void OnUpdate()
     {
-        Debug.Log("BattleRoundState OnUpdate");
+
     }
 
     public void OnExit()
     {
-        Debug.Log("BattleRoundState OnExit");
+
     }
 }
 public class RangeAttackState : IState
@@ -66,19 +62,26 @@ public class RangeAttackState : IState
     }
     public void OnEnter()
     {
+        Debug.Log("远程攻击开始");
+        GameManager.Instance.Attacklist.Clear();
         EventManager.OnRangAttack();
-        fsm.Delay(5, States.PawnMove);
+        GameManager.Instance.AttackFollowOrder();
+        EventManager.OnBloodBarChange();
+        //fsm.ChangeState(States.PawnMove);
+        fsm.Delay(3, States.PawnMove);
     }
 
     public void OnUpdate()
     {
-      
-        Debug.Log("远程攻击开始");
+
+
     }
 
     public void OnExit()
     {
-        Debug.Log("RangeAttackState OnExit");
+        GameManager.Instance.UniteRoundEnd();
+
+        Debug.Log("远程攻击结束");
     }
 }
 public class PawnMoveState : IState
@@ -91,16 +94,17 @@ public class PawnMoveState : IState
     public void OnEnter()
     {
         Debug.Log("UnitMoveState OnEnter");
-        TextShow.Instance.AddText("UnitMoveState OnEnter");
-        TextShow.Instance.AddText("Detection of units that can be moved");
-        fsm.Delay(5, States.MeleeAttack);
+        /* TextShow.Instance.AddText("UnitMoveState OnEnter");
+         TextShow.Instance.AddText("Detection of units that can be moved");*/
+        GameManager.Instance.AttackPawnMoveOrder();
+        GameManager.Instance.DefencePawnMoveOrder();
+        EventManager.OnMove();
+        fsm.Delay(3, States.MeleeAttack);
     }
 
     public void OnUpdate()
     {
-        Debug.Log("UnitMoveState OnUpdate");
-       
-        
+
     }
 
     public void OnExit()
@@ -116,21 +120,24 @@ public class MeleeAttackState : IState
         this.fsm = fsm;
     }
     public void OnEnter()
-    {   TextShow.Instance.AddText("end of movement");
+    {
         Debug.Log("MeleeAttackState OnEnter");
-        TextShow.Instance.AddText("MeleeAttackState OnEnter");
-        TextShow.Instance.AddText("Melee units that come into range start attacking");
+        GameManager.Instance.Attacklist.Clear();
         EventManager.OnMeleeAttack();
-        fsm.Delay(7, States.EndRound);
+        GameManager.Instance.AttackFollowOrder();
+        EventManager.OnBloodBarChange();
+        fsm.Delay(3, States.EndRound);
     }
 
     public void OnUpdate()
     {
-        Debug.Log("MeleeAttackState OnUpdate");
+
     }
 
     public void OnExit()
     {
+        GameManager.Instance.UniteRoundEnd();
+
         Debug.Log("MeleeAttackState OnExit");
     }
 }
@@ -143,31 +150,25 @@ public class EndRoundState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("EndRoundState OnEnter");
-        TextShow.Instance.AddText("EndRoundState OnEnter");
-        TextShow.Instance.AddText("Detection end judgment");
-        if (GameManager.Instance.weatheres.Count >= 4)
+
+
+        if (GameManager.Instance.weatheres.Count >= 7)
         {
-            TextShow.Instance.AddText("The weather is too bad, the battle is over");
-            //延时四秒后游戏退出
             fsm.Delay(4, States.Exit);
 
         }
         else
         {
+            EventManager.OnRoundEnd();
+            EventManager.OnBloodBarChange();
             fsm.Delay(4, States.WeatherRound);
         }
+
     }
 
     public void OnUpdate()
     {
-        Debug.Log("EndRoundState OnUpdate");
-        Debug.Log("检测场上是否还有单位");
-        Debug.Log("检测是否有玩家胜利");
-        Debug.Log("检测是否有AI胜利");
-        Debug.Log("检测是否平局");
-        Debug.Log("如果没有胜利者，进入下一回合");
-        
+
     }
 
     public void OnExit()
@@ -184,8 +185,8 @@ public class ExitState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("ExitState OnEnter");       
-        TextShow.Instance.AddText("Game Over");        
+        Debug.Log("ExitState OnEnter");
+        TextShow.Instance.AddText("Game Over");
         Application.Quit();
     }
 
@@ -200,7 +201,7 @@ public class ExitState : IState
     }
 }
 
-public class DefenceReinforceState:IState
+public class DefenceReinforceState : IState
 {
     private TurnBaseFSM fsm;
     public DefenceReinforceState(TurnBaseFSM fsm)

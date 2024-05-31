@@ -17,6 +17,10 @@ public static class EventManager
     //单位在哪个地方移动，攻击，被攻击，都会调用这个事件
     //但单位的具体攻击倾向，攻击方式，攻击目标，攻击范围，攻击伤害，攻击效果，都是在单位的脚本中实现的
     //在单位被抽取并生成的时候，它们就会把自身注册到这个事件中
+    //public static void OnIdel()
+    //{
+    //    Idel?.Invoke();
+    //}
     public static void OnMove()
     {//这里使用了?.操作符，如果Move不为空，就调用Move.Invoke()，否则不调用
         Move?.Invoke();

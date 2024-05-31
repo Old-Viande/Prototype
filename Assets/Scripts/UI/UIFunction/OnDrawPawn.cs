@@ -141,13 +141,17 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         if (dragCopy != null) Destroy(dragCopy);
         canvasGroup.alpha = 1;
         GameObject obj = LodManager.Instance.LoadResource(this.GetComponent<PawnData>().Name);
-        Vector3 point = GetObjectUnderMouse().transform.position;       
-        if(GameManager.Instance.unitesGridMap.GetValue(point) == null)
-        PawnDrag(obj,point);
+        if (GetObjectUnderMouse() != null)
+        {
+            Vector3 point = GetObjectUnderMouse().transform.position;
+            if (GameManager.Instance.unitesGridMap.GetValue(point) == null)
+                PawnDrag(obj, point);
+        }
+
     }
 
-    private void PawnDrag(GameObject obj,Vector3 point)
-    {     
+    private void PawnDrag(GameObject obj, Vector3 point)
+    {
         GameManager.Instance.floorGridMap.GetGridXZ(point, out int x, out int z);
         if (TurnBaseFSM.Instance.currentStateType == States.AttackPlacement)
         {
@@ -172,7 +176,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         else if (TurnBaseFSM.Instance.currentStateType == States.DefencePlacement)
         {
 
-            if (x >= 6 && z <= 2)
+            if (x > 6 && z <= 2)
             {
                 point = GameManager.Instance.floorGridMap.GetGridCenter(x, z);
                 GameObject pawn = Instantiate(obj, point, Quaternion.identity);
@@ -192,18 +196,23 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public void PawnSet(GameObject pawn)//到具体场景中的单位配置
     {
         pawn.AddComponent<PawnData>();
-        pawn.GetComponent<PawnData>().Unites = this.GetComponent<PawnData>().Unites;
-        pawn.GetComponent<PawnData>().Name = this.GetComponent<PawnData>().Unites.Name;
+        /* pawn.GetComponent<PawnData>().Unites = this.GetComponent<PawnData>().Unites;
+         pawn.GetComponent<PawnData>().Name = this.GetComponent<PawnData>().Unites.Name;*/
+        PawnData pad = pawn.GetComponent<PawnData>();
+        pad.Unites = this.GetComponent<PawnData>().Unites;
+        pad.Name = this.GetComponent<PawnData>().Name;
+        pad.Weaopn = this.GetComponent<PawnData>().Weaopn;
+        pad.Armor = this.GetComponent<PawnData>().Armor;
+        pad.Shield = this.GetComponent<PawnData>().Shield;
         Type type = GameManager.Instance.PawnTypeCheck(pawn.GetComponent<PawnData>().Name);
         PawnAnimationSet(pawn, this.GetComponent<PawnData>());
+        pawn.GetComponent<PawnData>().PawnSet();//设置脚本中的防御值和单位名称
         GameManager.Instance.AddComponent(pawn, type);
         pawn.name = this.name;
     }
     private void PawnAnimationSet(GameObject Pawn, PawnData unite)
     {
         string[] setskins = new string[3];
-
-
         setskins[0] = AnimationName(unite.Weaopn.Name);
         setskins[1] = AnimationName(unite.Armor.Name);
         setskins[2] = "Shield/Cape";

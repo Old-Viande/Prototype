@@ -26,11 +26,6 @@ public class GreatSword : BaseAction
        
     }
    
-    private void Attack()
-    {
-        GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);
-    }
-
     public override void AttackJudg()
     {
         GameObject target;
@@ -43,7 +38,7 @@ public class GreatSword : BaseAction
                target = GameManager.Instance.unitesGridMap.GetValue(x + UniteSave.Range, z + i);
                 if(target != null)
                 {
-                    if (target.GetComponent<BaseAction>().isAttacker!)
+                    if (!target.GetComponent<BaseAction>().isAttacker)
                     {
                         targets[i] = target;
                     }
@@ -64,16 +59,30 @@ public class GreatSword : BaseAction
                 }
             }
         }
-
-        var sortedList = targets.OrderByDescending(kv => kv.GetComponent<BaseAction>().UniteSave.Defence) // 按照key的大小进行排序                                
-                                  .ToArray();
-        targets = sortedList;
+        /* var sortedList = targets.OrderByDescending(kv => kv.GetComponent<BaseAction>().UniteSave.Defence) // 按照key的大小进行排序                                
+                                 .ToArray();
+         targets = sortedList;
+         List<GameObject> targetList = new List<GameObject>(targets);
+         targetList.RemoveAll(target => target == null);
+         if (targetList.Count != 0)
+         {
+           GameManager.Instance.AttackSettlement(this.gameObject, targets);
+           AnimaSet(targets);
+         }*/
+       
         List<GameObject> targetList = new List<GameObject>(targets);
         targetList.RemoveAll(target => target == null);
+
         if (targetList.Count != 0)
         {
-          GameManager.Instance.AttackSettlement(this.gameObject, targets);
-          AnimaSet(targets);
+            var sortedList = targetList
+                .OrderByDescending(kv => kv.GetComponent<BaseAction>().UniteSave.Defence) // 按照key的大小进行排序                                
+                .ToArray();
+
+            targetList = new List<GameObject>(sortedList); // 更新targetList以确保使用排序后的列表
+
+            GameManager.Instance.AttackSettlement(this.gameObject, targetList.ToArray());
+            AnimaSet(targetList.ToArray());
         }
     }
     private void AnimaSet(GameObject[] target)
@@ -81,10 +90,10 @@ public class GreatSword : BaseAction
         Spine2DSkinList spineA = this.GetComponent<Spine2DSkinList>();
         string[] atktracks = new string[] { "Attacks/Queen_Attack" };
         string[] targettracks = new string[] { "Hit/Hit" };
-        spineA.SetAnimation(atktracks);
+        spineA.SetAnimation(atktracks, false);
         for(var i = 0; i < target.Length; i++)
         {
-          target[i].GetComponent<Spine2DSkinList>().SetAnimation(targettracks);           
+          target[i].GetComponent<Spine2DSkinList>().SetAnimation(targettracks, false);           
         }
     }
 

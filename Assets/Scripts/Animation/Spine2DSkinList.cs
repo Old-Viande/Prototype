@@ -111,30 +111,32 @@ public class Spine2DSkinList : MonoBehaviour
 
     void Start()
     {
-        // 获取 SkeletonAnimation 组件
-        skeletonObj = GetComponent<SkeletonAnimation>();     
         if (skeletonObj == null)
         {
-            Debug.LogError("SkeletonAnimation component not found!");
-            return;
+            skeletonObj = GetComponent<SkeletonAnimation>();
         }
-
         // 初始化和设置
         SetFaceDir(skeletonObj);
         SetSkins(skins);
-        SetAnimation(tracks);
+        SetAnimation(tracks, false);
+        
     }
-
-    void OnValidate()
+    void OnEnable()
     {
         if (skeletonObj == null)
         {
             skeletonObj = GetComponent<SkeletonAnimation>();
         }
-
+        // 初始化和设置
+        SetFaceDir(skeletonObj);
         SetSkins(skins);
-        SetAnimation(tracks);
-    }
+        SetAnimation(tracks, false);
+        skeletonObj.AnimationState.Complete += delegate (TrackEntry trackEntry)
+        {
+            string[] idel = { "Idel/Idel" };
+            SetAnimation(idel, true);
+        };
+    }  
 
     public void SetFaceDir(SkeletonAnimation skeletonObj)
     {
@@ -178,7 +180,7 @@ public class Spine2DSkinList : MonoBehaviour
         }
     }
 
-    public void SetAnimation(string[] tracks)
+    public void SetAnimation(string[] tracks,bool loop)
     {
         if (skeletonObj == null || skeletonObj.AnimationState == null)
         {
@@ -193,12 +195,13 @@ public class Spine2DSkinList : MonoBehaviour
         }
 
         // 设置第一个动画
-        skeletonObj.AnimationState.SetAnimation(0, tracks[0], false);
+        skeletonObj.AnimationState.SetAnimation(0, tracks[0], loop);
+        Debug.Log(tracks);
         if(tracks.Length == 1) return; // 如果只有一个动画，直接返回（不需要添加到队列中）
         // 将剩余的动画依次添加到队列中
         for (int i = 1; i < tracks.Length; i++)
         {
-            skeletonObj.AnimationState.AddAnimation(0, tracks[i], false, 0);
+            skeletonObj.AnimationState.AddAnimation(0, tracks[i], loop, 0);
         }
     }
 

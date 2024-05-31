@@ -862,7 +862,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1326189195}
         m_TargetAssemblyTypeName: ButtonEvent, Assembly-CSharp
-        m_MethodName: EventBlood
+        m_MethodName: EventIdel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

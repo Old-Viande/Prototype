@@ -25,11 +25,6 @@ public class Halberd : BaseAction
     {
 
     }
-   
-    private void Attack()
-    {
-        GameManager.Instance.Attacklis.Add(UniteSave.Speed, this.gameObject);
-    }
 
     public override void AttackJudg()
     {
@@ -41,7 +36,11 @@ public class Halberd : BaseAction
             GameObject[] targets = new GameObject[UniteSave.Range];//创建一个数组用来存储多个目标
             for (var i = UniteSave.Range; i> 0; i--)//循环遍历攻击范围的所有单位，按照距离从远到近的顺序进行目标的添加
             {
-                if (GameManager.Instance.unitesGridMap.GetValue(x + i, z).GetComponent<BaseAction>().isAttacker!)
+                if (GameManager.Instance.unitesGridMap.GetValue(x + i, z) == null)
+                {
+                    continue;//如果目标为空，则跳过此次循环
+                }
+                if (!GameManager.Instance.unitesGridMap.GetValue(x + i, z).GetComponent<BaseAction>().isAttacker)
                 {
                     target = GameManager.Instance.unitesGridMap.GetValue(x + i, z);//如果是防御方则将目标设为攻击目标
                     if (target != null)
@@ -51,7 +50,10 @@ public class Halberd : BaseAction
                 }
             }//遍历结束，获得所有目标
             for (var i= targets.Length-1;i>0;i--)//遍历目标数组，从最远的目标开始攻击
-            {
+            {if (GameManager.Instance.unitesGridMap.GetValue(x - i, z) == null)
+                {
+                    continue;//如果目标为空，则跳过此次循环
+                }
                 if (targets[i] != null)//最远的目标不为空，则进行攻击
                 {
                     GameManager.Instance.AttackSettlement(this.gameObject, targets[i]);//进行攻击
@@ -66,6 +68,10 @@ public class Halberd : BaseAction
             GameObject[] targets = new GameObject[UniteSave.Range];//创建一个数组用来存储多个目标
             for (var i = UniteSave.Range; i > 0; i--)//循环遍历攻击范围的所有单位，按照距离从远到近的顺序进行目标的添加
             {
+                if (GameManager.Instance.unitesGridMap.GetValue(x - i, z) == null)
+                {
+                    continue;//如果目标为空，则跳过此次循环
+                }
                 if (GameManager.Instance.unitesGridMap.GetValue(x - i, z).GetComponent<BaseAction>().isAttacker)
                 {
                     target = GameManager.Instance.unitesGridMap.GetValue(x - i, z);//如果是防御方则将目标设为攻击目标
@@ -92,8 +98,8 @@ public class Halberd : BaseAction
         Spine2DSkinList spineB = target.GetComponent<Spine2DSkinList>();
         string[] atktracks = new string[] { "Attacks/Bishop_Attack" };
         string[] targettracks = new string[] { "Hit/Hit" };
-        spineA.SetAnimation(atktracks);
-        spineB.SetAnimation(targettracks);
+        spineA.SetAnimation(atktracks, false);
+        spineB.SetAnimation(targettracks, false);
     }
 
     protected override void OnDisable()

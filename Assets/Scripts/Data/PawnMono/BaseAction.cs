@@ -11,10 +11,11 @@ public class BaseAction : MonoBehaviour
     public bool canAttack;
     protected virtual void OnEnable()
     {
-        if(TurnBaseFSM.Instance.currentStateType == States.AttackPlacement)
+        if (TurnBaseFSM.Instance.currentStateType == States.AttackPlacement)
         {
             isAttacker = true;
-        }else if(TurnBaseFSM.Instance.currentStateType == States.DefencePlacement)
+        }
+        else if (TurnBaseFSM.Instance.currentStateType == States.DefencePlacement)
         {
             isAttacker = false;
         }
@@ -23,14 +24,15 @@ public class BaseAction : MonoBehaviour
         GameManager.Instance.unitesGridMap.GetGridXZ(this.transform.position, out int x, out int z);
         if (isAttacker)
         { //只有攻击单位才会添加到攻击列表中
-           GameManager.Instance.AttackMovelis.Add(new Vector2(x, z), this.gameObject);
+            GameManager.Instance.AttackMovelis.Add(new Vector2(x, z), this.gameObject);
         }
         else
         {//防御单位添加到防御列表中
-           GameManager.Instance.DefenceMovelis.Add(new Vector2(x, z), this.gameObject);
+            GameManager.Instance.DefenceMovelis.Add(new Vector2(x, z), this.gameObject);
         }
         EventManager.Move += Move;
         EventManager.RoundEnd += RoundEnd;
+       // EventManager.Idel += SetIdle;
     }
     public void Move()
     {
@@ -45,6 +47,17 @@ public class BaseAction : MonoBehaviour
             this.transform.DOMove(target, 2);
         }
     }
+
+    //public void SetIdle()
+    //{
+    //    string[] idel = { "Idel/Idel" };
+    //    this.GetComponent<Spine2DSkinList>().SetAnimation(idel, true);
+    //}
+    public void Attack()
+    {
+        GameManager.Instance.Attacklist.Add(new KeyValuePair<int, GameObject>(UniteSave.Speed, this.gameObject));
+    }
+
     public virtual void AttackJudg()
     {
 
@@ -62,4 +75,3 @@ public class BaseAction : MonoBehaviour
         GameManager.Instance.AttackMovelis.Remove(new Vector2(x, z));
     }
 }
- 

@@ -27,7 +27,7 @@ public class GameManager : Singleton<GameManager>
     #region 移动和攻击相关字典和变量
     public Dictionary<Vector2, GameObject> AttackMovelis = new Dictionary<Vector2, GameObject>();//用来储存攻击方单位移动
     public Dictionary<Vector2, GameObject> DefenceMovelis = new Dictionary<Vector2, GameObject>();//用来储存防守方单位移动
-    public Dictionary<int, GameObject> Attacklis = new Dictionary<int, GameObject>();//用来储存所有攻击单位
+    public List<KeyValuePair<int, GameObject>> Attacklist = new List<KeyValuePair<int, GameObject>>();//用来储存所有攻击单位
     //public Dictionary<int, GameObject> Defencelis = new Dictionary<int, GameObject>();//用来储存所有防守单位
     public Unites weatherEffect;//用来储存天气造成的效果
     #endregion
@@ -293,7 +293,7 @@ public class GameManager : Singleton<GameManager>
 
     #endregion    
     #region 单位攻击顺序安排
-    public void AttackFollowOrder()
+    public void AttackFollowOrder()//攻击顺序安排开始调用
     {
         List<KeyValuePair<int, GameObject>> attackOrder = AttackSetOrder();
         for(var i=attackOrder.ToArray().Length-1;i>0;i--)
@@ -308,7 +308,7 @@ public class GameManager : Singleton<GameManager>
 
     public List<KeyValuePair<int, GameObject>> AttackSetOrder()
     {
-        var sortedList = Attacklis.OrderByDescending(kv => kv.Key) // 按照key的大小进行排序                                
+        var sortedList = Attacklist.OrderByDescending(kv => kv.Key) // 按照key的大小进行排序                                
                                   .ToList();
         return sortedList;
     }
@@ -321,8 +321,8 @@ public class GameManager : Singleton<GameManager>
         Unites Du = defence.GetComponent<PawnData>().Unites;
         int Defence = defence.GetComponent<PawnData>().Defence;
         int Damage = damage.GetComponent<PawnData>().Unites.Damage;
-        Defence += weatherEffect.Defence;//防御值收到天气的影响
-        Defence-=Damage+weatherEffect.Damage;//伤害值收到天气的影响
+        Defence += weatherEffect==null?0:weatherEffect.Defence;//防御值收到天气的影响
+        Defence-=Damage+(weatherEffect==null? 0 : weatherEffect.Damage);//伤害值收到天气的影响
         if (Defence <= 0&&Au.Speed>Du.Speed)
         {
             //如果防守方的防御力小于等于0，并且攻击方的速度大于防守方的速度，则将防守方的单位立刻移除
@@ -341,12 +341,12 @@ public class GameManager : Singleton<GameManager>
     {
         Unites Au = damage.GetComponent<PawnData>().Unites;
         int Damage = damage.GetComponent<PawnData>().Unites.Damage;
-        Damage += weatherEffect.Damage;//伤害值收到天气的影响
+        Damage += weatherEffect == null ? 0 : weatherEffect.Damage;//伤害值收到天气的影响
         foreach (var item in defencelis)
         {
           Unites Du = item.GetComponent<PawnData>().Unites;
             int Defence = item.GetComponent<PawnData>().Defence;
-            Defence += weatherEffect.Defence;//防御值收到天气的影响
+            Defence += weatherEffect == null ? 0 : weatherEffect.Defence;//防御值收到天气的影响
             Defence -= Damage;
             if (Defence <= 0 && Au.Speed > Du.Speed)
             {
@@ -366,7 +366,7 @@ public class GameManager : Singleton<GameManager>
     
     public void UniteRoundEnd()
     {
-        foreach (var item in Attacklis)
+        foreach (var item in Attacklist)
         {
             if (item.Value.GetComponent<PawnData>().Defence<=0)
             {

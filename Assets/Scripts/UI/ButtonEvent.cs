@@ -14,6 +14,10 @@ public class ButtonEvent : MonoBehaviour
     {
         EventManager.OnBloodBarChange();
     }
+    public void EventWithdraw()
+    {
+        EventManager.OnWithdraw();
+    }
     public void drewcard()
     {
         //GameManager.Instance.CardPealDrew(GameManager.Instance.uniteTypeSO);
