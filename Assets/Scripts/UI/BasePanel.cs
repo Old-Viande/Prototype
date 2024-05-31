@@ -17,7 +17,7 @@ public class BasePanel
     public virtual void OnEnter()
     {
         canvasGroup = UITool.Instance.GetorAddComponent<CanvasGroup>();
-        Debug.Log("OnEnter"+canvasGroup);
+       
     }
     public virtual void OnPause()
     {

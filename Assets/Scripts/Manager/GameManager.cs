@@ -296,7 +296,7 @@ public class GameManager : Singleton<GameManager>
     public void AttackFollowOrder()//攻击顺序安排开始调用
     {
         List<KeyValuePair<int, GameObject>> attackOrder = AttackSetOrder();
-        for(var i=attackOrder.ToArray().Length-1;i>0;i--)
+        for(var i=attackOrder.ToArray().Length-1;i>=0;i--)
         {
             GameObject obj = attackOrder.ToArray()[i].Value;
             if (obj != null)//如果单位不为空
@@ -317,6 +317,7 @@ public class GameManager : Singleton<GameManager>
     {
         //当该功能被调用时，需要先将调用者和被调用者的单位进行传入
         //然后进行攻击方和防守方的数据获取
+        Debug.Log("攻击方的单位为" + damage.name + "防守方的单位为" + defence.name);
         Unites Au = damage.GetComponent<PawnData>().Unites;
         Unites Du = defence.GetComponent<PawnData>().Unites;
         int Defence = defence.GetComponent<PawnData>().Defence;
@@ -343,7 +344,8 @@ public class GameManager : Singleton<GameManager>
         int Damage = damage.GetComponent<PawnData>().Unites.Damage;
         Damage += weatherEffect == null ? 0 : weatherEffect.Damage;//伤害值收到天气的影响
         foreach (var item in defencelis)
-        {
+        { 
+          Debug.Log("攻击方的单位为" + damage.name + "被攻击的单位之一为" + item.name);
           Unites Du = item.GetComponent<PawnData>().Unites;
             int Defence = item.GetComponent<PawnData>().Defence;
             Defence += weatherEffect == null ? 0 : weatherEffect.Defence;//防御值收到天气的影响
@@ -366,15 +368,19 @@ public class GameManager : Singleton<GameManager>
     
     public void UniteRoundEnd()
     {
-        foreach (var item in Attacklist)
-        {
-            if (item.Value.GetComponent<PawnData>().Defence<=0)
+        List<Vector2>obj = new List<Vector2>();
+        foreach(var item in unitesGridMap.gridmap) 
+        { 
+            if (item.Value != null&&item.Value.GetComponent<PawnData>().Defence<=0)
             {
-                //对单位进行消除操作
-                unitesGridMap.GetGridXZ(item.Value.transform.position, out int x, out int z);
-                unitesGridMap.SetValue(x, z, null);
+                //对单位进行消除操作               
+                obj.Add(item.Key);
                 item.Value.SetActive(false);
             }
+        }
+        foreach(var item in obj)
+        {
+            unitesGridMap.SetValue((int)item.x, (int)item.y, null);
         }
     }
     #endregion

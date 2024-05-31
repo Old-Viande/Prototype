@@ -100,6 +100,7 @@ public class Spear : BaseAction
     }
     protected override void OnDisable()
     {
+        base.OnDisable();
         EventManager.MeleeAttack -= Attack;
     }
 }

@@ -80,7 +80,6 @@ public class RangeAttackState : IState
     public void OnExit()
     {
         GameManager.Instance.UniteRoundEnd();
-
         Debug.Log("Ô¶³Ì¹¥»÷½áÊø");
     }
 }
@@ -93,7 +92,7 @@ public class PawnMoveState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("UnitMoveState OnEnter");
+      
         /* TextShow.Instance.AddText("UnitMoveState OnEnter");
          TextShow.Instance.AddText("Detection of units that can be moved");*/
         GameManager.Instance.AttackPawnMoveOrder();
@@ -109,7 +108,7 @@ public class PawnMoveState : IState
 
     public void OnExit()
     {
-        Debug.Log("UnitMoveState OnExit");
+    
     }
 }
 public class MeleeAttackState : IState
@@ -121,7 +120,7 @@ public class MeleeAttackState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("MeleeAttackState OnEnter");
+      
         GameManager.Instance.Attacklist.Clear();
         EventManager.OnMeleeAttack();
         GameManager.Instance.AttackFollowOrder();
@@ -136,9 +135,7 @@ public class MeleeAttackState : IState
 
     public void OnExit()
     {
-        GameManager.Instance.UniteRoundEnd();
-
-        Debug.Log("MeleeAttackState OnExit");
+        GameManager.Instance.UniteRoundEnd();      
     }
 }
 public class EndRoundState : IState
@@ -173,7 +170,7 @@ public class EndRoundState : IState
 
     public void OnExit()
     {
-        Debug.Log("EndRoundState OnExit");
+     
     }
 }
 public class ExitState : IState
@@ -185,19 +182,18 @@ public class ExitState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("ExitState OnEnter");
-        TextShow.Instance.AddText("Game Over");
+      
         Application.Quit();
     }
 
     public void OnUpdate()
     {
-        Debug.Log("ExitState OnUpdate");
+       
     }
 
     public void OnExit()
     {
-        Debug.Log("ExitState OnExit");
+        
     }
 }
 
@@ -210,21 +206,18 @@ public class DefenceReinforceState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("DefenceReinforceState OnEnter");
-        TextShow.Instance.AddText("DefenceReinforceState OnEnter");
-        TextShow.Instance.AddText("DefenceReinforceState OnEnter");
-        TextShow.Instance.AddText("DefenceReinforceState OnEnter");
+       
         fsm.Delay(4, States.AttackReinforce);
     }
 
     public void OnUpdate()
     {
-        Debug.Log("DefenceReinforceState OnUpdate");
+       
     }
 
     public void OnExit()
     {
-        Debug.Log("DefenceReinforceState OnExit");
+        
     }
 }
 
@@ -237,20 +230,17 @@ public class AttackReinforceState : IState
     }
     public void OnEnter()
     {
-        Debug.Log("AttackReinforceState OnEnter");
-        TextShow.Instance.AddText("AttackReinforceState OnEnter");
-        TextShow.Instance.AddText("AttackReinforceState OnEnter");
-        TextShow.Instance.AddText("AttackReinforceState OnEnter");
+        
         fsm.Delay(4, States.EndRound);
     }
 
     public void OnUpdate()
     {
-        Debug.Log("AttackReinforceState OnUpdate");
+        
     }
 
     public void OnExit()
     {
-        Debug.Log("AttackReinforceState OnExit");
+      
     }
 }

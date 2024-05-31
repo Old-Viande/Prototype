@@ -72,6 +72,13 @@ public class BaseAction : MonoBehaviour
         EventManager.Move -= Move;
         EventManager.RoundEnd -= RoundEnd;
         GameManager.Instance.unitesGridMap.GetGridXZ(this.transform.position, out int x, out int z);
+        if (isAttacker)
+        {
         GameManager.Instance.AttackMovelis.Remove(new Vector2(x, z));
+        }
+        else
+        {
+         GameManager.Instance.DefenceMovelis.Remove(new Vector2(x, z));
+        }
     }
 }

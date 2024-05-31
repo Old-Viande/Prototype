@@ -100,8 +100,9 @@ public class CrossBow : BaseAction
     }
 
     protected override void OnDisable()
-    {      
-        EventManager.MeleeAttack -= Attack;       
+    {
+        base.OnDisable();
+        EventManager.RangAttack -= Attack;       
     }
 
 }

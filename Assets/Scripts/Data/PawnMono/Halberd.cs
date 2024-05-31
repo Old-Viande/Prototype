@@ -49,7 +49,7 @@ public class Halberd : BaseAction
                     }
                 }
             }//遍历结束，获得所有目标
-            for (var i= targets.Length-1;i>0;i--)//遍历目标数组，从最远的目标开始攻击
+            for (var i= targets.Length-1;i>=0;i--)//遍历目标数组，从最远的目标开始攻击
             {if (GameManager.Instance.unitesGridMap.GetValue(x - i, z) == null)
                 {
                     continue;//如果目标为空，则跳过此次循环
@@ -81,7 +81,7 @@ public class Halberd : BaseAction
                     }
                 }
             }//遍历结束，获得所有目标
-            for (var i = targets.Length - 1; i > 0; i--)//遍历目标数组，从最近的目标开始攻击
+            for (var i = targets.Length - 1; i >= 0; i--)//遍历目标数组，从最近的目标开始攻击
             {
                 if (targets[i] != null)//最近的目标不为空，则进行攻击
                 {
@@ -104,6 +104,7 @@ public class Halberd : BaseAction
 
     protected override void OnDisable()
     {
+        base.OnDisable();
         EventManager.MeleeAttack -= Attack;
     }
 

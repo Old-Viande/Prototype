@@ -302,7 +302,7 @@ public class CardDrawFun : Singleton<CardDrawFun>
         uiRaycaster.Raycast(pointerEventData, results);
         foreach (RaycastResult result in results)
         {
-            Debug.Log("UI Element: " + result.gameObject.name);
+           // Debug.Log("UI Element: " + result.gameObject.name);
             if (result.gameObject.name.Contains("ArmorCard") || result.gameObject.name.Contains("UniteCard"))
             {
                 return result.gameObject;

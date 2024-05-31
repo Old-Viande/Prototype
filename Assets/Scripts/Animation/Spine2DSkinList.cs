@@ -196,7 +196,7 @@ public class Spine2DSkinList : MonoBehaviour
 
         // 设置第一个动画
         skeletonObj.AnimationState.SetAnimation(0, tracks[0], loop);
-        Debug.Log(tracks);
+       // Debug.Log(tracks);
         if(tracks.Length == 1) return; // 如果只有一个动画，直接返回（不需要添加到队列中）
         // 将剩余的动画依次添加到队列中
         for (int i = 1; i < tracks.Length; i++)

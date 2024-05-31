@@ -49,7 +49,7 @@ public class LongBow : BaseAction
                     }
                 }
             }//遍历结束，获得所有目标
-            for (var i = targets.Length - 1; i > 0; i--)//遍历目标数组，从最远的目标开始攻击
+            for (var i = targets.Length - 1; i >= 0; i--)//遍历目标数组，从最远的目标开始攻击
             {
                 if (targets[i] != null)//最远的目标不为空，则进行攻击
                 {
@@ -78,7 +78,7 @@ public class LongBow : BaseAction
                     }
                 }
             }//遍历结束，获得所有目标
-            for (var i = targets.Length - 1; i > 0; i--)//遍历目标数组，从最近的目标开始攻击
+            for (var i = targets.Length - 1; i >= 0; i--)//遍历目标数组，从最近的目标开始攻击
             {
                 if (targets[i] != null)//最近的目标不为空，则进行攻击
                 {
@@ -101,7 +101,8 @@ public class LongBow : BaseAction
 
     protected override void OnDisable()
     {
-        EventManager.MeleeAttack -= Attack;
+        base.OnDisable();
+        EventManager.RangAttack -= Attack;
     }
 
 }
