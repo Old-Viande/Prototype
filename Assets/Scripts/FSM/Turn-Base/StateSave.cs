@@ -97,6 +97,7 @@ public class AttackPlacementState : IState
     {
         StartManager.Instance.ClosePanel();
         StartManager.Instance.OpenMainPanel();
+        MainPanelFun.Instance.PawnPanelInit();
         StartManager.Instance.SetInfPanel("This is the placement phase, drag and drop the unit card you configured earlier into the grid on the right side of the screen.\r\n" +
                        "Click the Finish button at the bottom when all the units are placed.");
         Debug.Log("AttackPlacementState OnEnter");

@@ -13,11 +13,8 @@ public class CardDrawFun : Singleton<CardDrawFun>
     public Button drewArmor;
     public Button drewWeapon;
     public Button finish;
-
     public GameObject UContent;
     public GameObject AContent;
-    /* public GameObject UnitStockPanel;
-     public GameObject ArmorStockPanel;*/
     public GameObject UniteCard;
     public GameObject ArmorCard;
     public GameObject DetailPanel;
