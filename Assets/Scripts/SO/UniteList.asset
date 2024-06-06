@@ -16,7 +16,7 @@ MonoBehaviour:
   - Name: Sword
     Damage: 2
     Defence: 1
-    Speed: 0
+    Speed: 4
     Range: 1
     attackType: 1
     Canshield: 1
@@ -24,7 +24,7 @@ MonoBehaviour:
   - Name: Spear
     Damage: 3
     Defence: 1
-    Speed: 0
+    Speed: 4
     Range: 2
     attackType: 3
     Canshield: 1
@@ -32,7 +32,7 @@ MonoBehaviour:
   - Name: Halberd
     Damage: 3
     Defence: 1
-    Speed: 0
+    Speed: 4
     Range: 2
     attackType: 2
     Canshield: 1
@@ -40,7 +40,7 @@ MonoBehaviour:
   - Name: GreatSword
     Damage: 4
     Defence: 1
-    Speed: 0
+    Speed: 4
     Range: 1
     attackType: 7
     Canshield: 0
@@ -48,7 +48,7 @@ MonoBehaviour:
   - Name: LongBow
     Damage: 2
     Defence: 1
-    Speed: 0
+    Speed: 4
     Range: 4
     attackType: 5
     Canshield: 0
@@ -56,7 +56,7 @@ MonoBehaviour:
   - Name: CrossBow
     Damage: 2
     Defence: 1
-    Speed: 0
+    Speed: 3
     Range: 4
     attackType: 4
     Canshield: 0

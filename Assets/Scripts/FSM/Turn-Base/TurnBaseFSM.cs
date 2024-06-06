@@ -10,20 +10,11 @@ public class TurnBaseFSM : Singleton<TurnBaseFSM>
     //这样我们就可以通过状态的类型来获取状态的实例
     public IState currentState;
     public States currentStateType;
-    public int RoundCount = 0;
-
+    public int RoundCount = 1;
+    public int DeTime = 2;
+    public bool  isAtkWin = false;
     protected virtual void Start()
-    {
-        /* state.Add(States.RoundStart, new StartState(this));
-         state.Add(States.DrawPile, new AttackStartDrawPileState(this));
-         state.Add(States.Configuration, new AttackConfigurationState(this));
-         state.Add(States.BattleRound, new BattleRoundState(this));
-         state.Add(States.Weather, new WeatherState(this));
-         state.Add(States.RangedAttack, new RangeAttackState(this));
-         state.Add(States.UnitMove, new UnitMoveState(this));
-         state.Add(States.MeleeAttack, new MeleeAttackState(this));
-         state.Add(States.EndRound, new EndRoundState(this));
-         state.Add(States.Exit, new ExitState(this));*/
+    {     
         state.Add(States.RoundStart, new StartRoundState(this));
         state.Add(States.DefenceDrawPile, new DefenceStartDrawPileState(this));
         state.Add(States.DefenceConfiguration, new DefenceConfigurationState(this));
@@ -32,20 +23,22 @@ public class TurnBaseFSM : Singleton<TurnBaseFSM>
         state.Add(States.AttackConfiguration, new AttackConfigurationState(this));
         state.Add(States.AttackPlacement, new AttackPlacementState(this));
         state.Add(States.BattleRound, new BattleRoundState(this));
-        state.Add(States.WeatherRound, new WeatherState(this));
+        state.Add(States.PreRound, new WeatherState(this));
         state.Add(States.DefenceDrawRound, new DefenceDrawRoundState(this));
-        state.Add(States.DefenceWithdrawn, new DefenceWithdrawnState(this));
+       // state.Add(States.DefenceWithdrawn, new DefenceWithdrawnState(this));
         state.Add(States.AttackDrawRound, new AttackDrawRoundState(this));
-        state.Add(States.AttackWithdrawn, new AttackWithdrawnState(this));
+      //  state.Add(States.AttackWithdrawn, new AttackWithdrawnState(this));
         state.Add(States.RangeAttack, new RangeAttackState(this));
         state.Add(States.PawnMove, new PawnMoveState(this));
         state.Add(States.MeleeAttack, new MeleeAttackState(this));
         state.Add(States.DefenceReinforce, new DefenceReinforceState(this));
         state.Add(States.AttackReinforce, new AttackReinforceState(this));
         state.Add(States.EndRound, new EndRoundState(this));
-        
+        state.Add(States.AttackConfigurationRound, new AttackConfigurationRoundState(this));
+        state.Add(States.DefenceConfigurationRound, new DefenceConfigurationRoundState(this));
+        state.Add(States.Exit, new ExitState(this));
         ChangeState(States.RoundStart);
-        // ChangeState(States.BattleRound);
+
     }
 
 
@@ -67,6 +60,11 @@ public class TurnBaseFSM : Singleton<TurnBaseFSM>
 
         currentStateType = type;
         currentState = state[type];
+        if (MainPanelFun.Instance != null) 
+        {
+           MainPanelFun.Instance.PanelText();
+           MainPanelFun.Instance.SidInfor();
+        }
         currentState.OnEnter();
         //解释这里的代码 currentState.OnExit();是调用当前状态的退出方法
         //currentState = state[newState];是将当前状态改变为新的状态
@@ -74,9 +72,9 @@ public class TurnBaseFSM : Singleton<TurnBaseFSM>
         //currentStateType = newState;是将当前状态的类型改变为新的状态的类型
     }
 
-    public void Delay(float time, States type)
+    public void Delay(States type)
     {
-        StartCoroutine(DelayCoroutine(time, type));
+        StartCoroutine(DelayCoroutine(DeTime, type));
     }
 
     private IEnumerator DelayCoroutine(float time, States type)

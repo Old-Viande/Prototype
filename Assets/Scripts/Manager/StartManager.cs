@@ -66,6 +66,10 @@ public class StartManager :Singleton<StartManager>
         UITool.Instance.FindDeepChild(objp, "Text (TMP)").GetComponent<TextMeshProUGUI>().text = text;
         objp.transform.SetAsLastSibling();
     }
+    public void OpenEndPanel()
+    {
+        PanelManager.PushPanel(new EndPanel());
+    }
     public void ClosePanel()
     {
         PanelManager.PopPanel();

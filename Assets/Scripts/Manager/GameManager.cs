@@ -12,7 +12,8 @@ public class GameManager : Singleton<GameManager>
     //这里还会储存一些数据
     // Start is called before the first frame update
     //在这里生成一个用来储存卡牌的功能 
-    public GameObject floor;
+    public GameObject floor1;
+    public GameObject floor2;
     public GridMap<GameObject> floorGridMap;//网格生成地板
     public GridMap<GameObject> unitesGridMap;//单位生成地板
     public PathFinder pathFinder;//寻路算法
@@ -50,26 +51,50 @@ public class GameManager : Singleton<GameManager>
     public ObjectPool AttackPawnPool;
     public ObjectPool DefencePawnPool;
     #endregion
-    public ObjectPool abandonedPool;//储存被废弃的单位
+    public ObjectPool AbandonedPool;//储存被废弃的单位
+    public Dictionary<string, GameObject> atkPawnDic = new Dictionary<string, GameObject>();//用来储存所有进攻方的已经上场单位
+    public Dictionary<string, GameObject> defPawnDic = new Dictionary<string, GameObject>();//用来储存所有防守方的已经上场单位
+    public Dictionary<string, GameObject> atkPawnSave = new Dictionary<string, GameObject>();//用来储存所有进攻方的单位
+    public Dictionary<string, GameObject> defPawnSave = new Dictionary<string, GameObject>();//用来储存所有防守方的单位
+    public List<GameObject> atkPawnGrave = new List<GameObject>();//用来储存所有进攻方阵亡单位
+    public List<GameObject> defPawnGrave = new List<GameObject>();//用来储存所有防守方阵亡单位
+    public const int MaxCCount = 8;//最大阵亡单位数量
+    
     void Start()
     {
         floorGridMap = new GridMap<GameObject>(maxX, maxY, minX, minY, celllong, origenPoint, floorSave);
         unitesGridMap = new GridMap<GameObject>(maxX, maxY, minX, minY, celllong, origenPoint, UniteClear);
         pathFinder = new PathFinder(maxX, maxY, minX, minY, celllong, origenPoint);
         //对象池的初始化
+        Transform poolParent = GameObject.Find("ObjectPool")?.transform;//这里是对象池停止激活物体的存放处
         AttackUnitePool = new ObjectPool();
+        AttackUnitePool.SetPoolParent(poolParent);
         DefenceUnitePool = new ObjectPool();
+        DefenceUnitePool.SetPoolParent(poolParent);
         AttackArmorPool = new ObjectPool();
+        AttackArmorPool.SetPoolParent(poolParent);
         DefenceArmorPool = new ObjectPool();
+        DefenceArmorPool.SetPoolParent(poolParent);
         AttackPawnPool = new ObjectPool();
+        AttackPawnPool.SetPoolParent(poolParent);
         DefencePawnPool = new ObjectPool();
-        abandonedPool = new ObjectPool();
+        DefencePawnPool.SetPoolParent(poolParent);
+        AbandonedPool = new ObjectPool();
+        AbandonedPool.SetPoolParent(poolParent);
     }
 
     private GameObject floorSave(GridMap<GameObject> map, int x, int z)
     {
-        return Instantiate(floor, map.GetGridCenter(x, z), Quaternion.identity);
+        if ((x + z) % 2 == 0)
+        {
+            return Instantiate(floor1, map.GetGridCenter(x, z), Quaternion.identity);
+        }
+        else
+        {
+            return Instantiate(floor2, map.GetGridCenter(x, z), Quaternion.identity);
+        }
     }
+
     private GameObject UniteClear(GridMap<GameObject> map, int x, int z)
     {
         return null;
@@ -247,6 +272,14 @@ public class GameManager : Singleton<GameManager>
         return DefencePawnPool.GetObject(key);
     }
     #endregion
+    public void AbandonedPoolSave(string key, GameObject obj)
+    {
+        AbandonedPool.ReturnObject(key, obj);
+    }
+    public GameObject AbandonedPoolGet(string key)
+    {
+        return AbandonedPool.GetObject(key);
+    }
     #region 场上单位相关
     public Type PawnTypeCheck(string Pawnname)
     {
@@ -295,8 +328,8 @@ public class GameManager : Singleton<GameManager>
     #region 单位攻击顺序安排
     public void AttackFollowOrder()//攻击顺序安排开始调用
     {
-        List<KeyValuePair<int, GameObject>> attackOrder = AttackSetOrder();
-        for(var i=attackOrder.ToArray().Length-1;i>=0;i--)
+         List<KeyValuePair<int, GameObject>> attackOrder = AttackSetOrder();
+        for (var i= attackOrder.ToArray().Length-1;i>=0;i--)
         {
             GameObject obj = attackOrder.ToArray()[i].Value;
             if (obj != null)//如果单位不为空
@@ -312,7 +345,7 @@ public class GameManager : Singleton<GameManager>
                                   .ToList();
         return sortedList;
     }
-
+    
     public void AttackSettlement(GameObject damage, GameObject defence)
     {
         //当该功能被调用时，需要先将调用者和被调用者的单位进行传入
@@ -329,12 +362,22 @@ public class GameManager : Singleton<GameManager>
             //如果防守方的防御力小于等于0，并且攻击方的速度大于防守方的速度，则将防守方的单位立刻移除
             unitesGridMap.GetGridXZ(defence.transform.position, out int x, out int z);
             unitesGridMap.SetValue(x, z, null);
+            if (defence.GetComponent<BaseAction>().isAttacker)
+            {
+                atkPawnGrave.Add(defence);
+                atkPawnSave.Remove(defence.name);
+            }
+            else
+            {
+                defPawnGrave.Add(defence);
+                defPawnSave.Remove(defence.name);
+            }
             defence.SetActive(false);
         }
         else
         {
         //单位并未立刻击杀，则是将防守方的防御力减去攻击方的伤害值，并将防守方的防御力赋值给防守方的单位
-        defence.GetComponent<PawnData>().Defence = Defence;
+         defence.GetComponent<PawnData>().Defence = Defence;
         }
     }
 
@@ -374,14 +417,38 @@ public class GameManager : Singleton<GameManager>
             if (item.Value != null&&item.Value.GetComponent<PawnData>().Defence<=0)
             {
                 //对单位进行消除操作               
-                obj.Add(item.Key);
+                obj.Add(item.Key);                
                 item.Value.SetActive(false);
+                if(item.Value.GetComponent<BaseAction>().isAttacker)
+                {
+                    atkPawnGrave.Add(item.Value);
+                    atkPawnSave.Remove(item.Value.name);
+                }
+                else
+                {
+                    defPawnGrave.Add(item.Value);
+                    defPawnSave.Remove(item.Value.name);
+                }
             }
         }
         foreach(var item in obj)
         {
             unitesGridMap.SetValue((int)item.x, (int)item.y, null);
         }
+        obj.Clear();
+        foreach(var key in unitesGridMap.gridmap)
+        {
+            if (key.Value != null&& key.Value.activeSelf==false)
+            {
+               // Destroy(key.Value);
+                obj.Add(key.Key);
+            }
+        }
+        foreach(var item in obj)
+        {
+              unitesGridMap.SetValue((int)item.x, (int)item.y, null);
+        }
+        Debug.Log(unitesGridMap);
     }
     #endregion
     #region 玩家单位移动排序功能
@@ -481,6 +548,12 @@ public class GameManager : Singleton<GameManager>
 
         // 如果无法向左移动（左侧有物体），则返回原位置
         return new Vector2(x, z);
+    }
+
+    public void ResetMoveList()
+    {
+        AttackMovelis.Clear();
+        DefenceMovelis.Clear();
     }
 
     #endregion

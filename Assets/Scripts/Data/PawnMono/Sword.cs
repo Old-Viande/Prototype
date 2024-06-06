@@ -70,11 +70,11 @@ public class Sword : BaseAction
     {
         Spine2DSkinList spineA = this.GetComponent<Spine2DSkinList>();
         Spine2DSkinList spineB= target.GetComponent<Spine2DSkinList>();
-        string[] atktracks = new string[] { "Attacks/Squire_Attack" };
-        string[] targettracks = new string[] { "Hit/Hit" };
-        spineA.SetAnimation(atktracks,false);
-        spineB.SetAnimation(targettracks,false);
-        
+        string atktracks ="Attacks/Squire_Attack" ;
+        string targettracks =  "Hit/Hit" ;
+        spineA.SetAnimaList(atktracks);
+        spineB.SetAnimaList(targettracks);
+
     }
     protected override void OnDisable()
     {

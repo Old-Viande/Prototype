@@ -28,11 +28,13 @@ public enum States
     AttackConfiguration,//进攻方配置单位
     AttackPlacement,//进攻方放置单位
     BattleRound,//战斗回合
-    WeatherRound,//天气抽取
+    PreRound,//天气抽取
     DefenceDrawRound,//防御方回合内抽牌
     DefenceWithdrawn,//防御方撤退
     AttackDrawRound,//进攻方回合内抽牌
     AttackWithdrawn,//进攻方撤退
+    DefenceConfigurationRound,//防御方回合内配置
+    AttackConfigurationRound,//进攻方回合内配置
     RangeAttack,//远程攻击
     PawnMove,//前三个回合仅攻击方单位移动
     MeleeAttack,//近战攻击

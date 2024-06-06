@@ -124,8 +124,10 @@ public class AttackDrawRoundState : IState
     }
     public void OnEnter()
     {
-        StartManager.Instance.SetInfPanel("This is the draw card phase, click on the card pile on the left side to get unit cards and armor cards.\r\n" +
-                                  "Click the Finish button at the bottom when all the cards are drawn.");
+        StartManager.Instance.ClosePanel();
+        StartManager.Instance.OpenDraw();
+        CardDrawFun.Instance.DrawTimes = 2;
+
     }
 
     public void OnUpdate()
@@ -206,7 +208,7 @@ public class DefenceConfigurationState : IState
         StartManager.Instance.OpenConfig();
         StartManager.Instance.SetInfPanel("Here is the configuration panel, drag and drop the card you drew earlier into the panel at the bottom center " +
             "and click Finish Configuring Units.\r\nClick the Done button at the bottom when all the configurations are done.");
-        ConfigFun.Instance.UIStock();
+         ConfigFun.Instance.UIStock();
     }
 
     public void OnUpdate()
@@ -258,8 +260,9 @@ public class DefenceDrawRoundState : IState
     }
     public void OnEnter()
     {
-        StartManager.Instance.SetInfPanel("This is the draw card phase, click on the card pile on the left side to get unit cards and armor cards.\r\n" +
-                                             "Click the Finish button at the bottom when all the cards are drawn.");
+        StartManager.Instance.ClosePanel();
+        StartManager.Instance.OpenDraw();
+        CardDrawFun.Instance.DrawTimes = 2;
     }
 
     public void OnUpdate()

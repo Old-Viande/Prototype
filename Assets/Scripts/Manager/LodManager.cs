@@ -73,7 +73,6 @@ public class LodManager : Singleton<LodManager>
 
     }
     #endregion
-
     void Update()
     {
 

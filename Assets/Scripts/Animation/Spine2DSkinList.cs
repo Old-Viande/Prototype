@@ -2,6 +2,7 @@
 using UnityEngine;
 using Spine.Unity;
 using Spine;
+using System.Collections.Generic;
 
 /*public class Spine2DSkinList : MonoBehaviour
 {
@@ -104,7 +105,7 @@ public class Spine2DSkinList : MonoBehaviour
     public string[] skins;
 
     [SpineAnimation]
-    public string[] tracks;
+    public List<string> tracks = new List<string>();
 
     private SkeletonAnimation skeletonObj;
     private Skin combinedSkin;
@@ -118,7 +119,7 @@ public class Spine2DSkinList : MonoBehaviour
         // 初始化和设置
         SetFaceDir(skeletonObj);
         SetSkins(skins);
-        SetAnimation(tracks, false);
+        SetAnimation(tracks.ToArray(), false);
         
     }
     void OnEnable()
@@ -130,7 +131,7 @@ public class Spine2DSkinList : MonoBehaviour
         // 初始化和设置
         SetFaceDir(skeletonObj);
         SetSkins(skins);
-        SetAnimation(tracks, false);
+        SetAnimation(tracks.ToArray(), false);
         skeletonObj.AnimationState.Complete += delegate (TrackEntry trackEntry)
         {
             string[] idel = { "Idel/Idel" };
@@ -141,7 +142,15 @@ public class Spine2DSkinList : MonoBehaviour
     public void SetFaceDir(SkeletonAnimation skeletonObj)
     {
         // 检查状态并设置翻转方向
-        bool check = TurnBaseFSM.Instance.currentStateType == States.AttackPlacement;
+        bool check;
+        if(TurnBaseFSM.Instance.currentStateType == States.AttackPlacement|| TurnBaseFSM.Instance.currentStateType == States.AttackReinforce)
+        {
+            check = true;
+        }
+        else
+        {
+            check = false;
+        }
         skeletonObj.initialFlipX = check;
         // 确保 Skeleton 已初始化
         if (skeletonObj.Skeleton == null)
@@ -151,7 +160,7 @@ public class Spine2DSkinList : MonoBehaviour
         }     
         skeletonObj.Skeleton.ScaleX = skeletonObj.initialFlipX ? 1 : -1;      
     }
-
+    
     public void SetSkins(string[] newskins)
     {
         // 创建一个新的皮肤组合
@@ -179,29 +188,37 @@ public class Spine2DSkinList : MonoBehaviour
             Debug.LogError("SkeletonAnimation or combinedSkin is null.");
         }
     }
-
-    public void SetAnimation(string[] tracks,bool loop)
+    public void SetAnimaList(string rtracks)//添加动画到队列，但并不播放
+    {
+        tracks.Add(rtracks);
+    }
+    public void PlayAnimation()//将动画队列开始播放
+    {
+        SetAnimation(tracks.ToArray(), false);
+        tracks.Clear();
+    }
+    public void SetAnimation(string[] rtracks,bool loop)
     {
         if (skeletonObj == null || skeletonObj.AnimationState == null)
         {
-            Debug.LogError("SkeletonAnimation or AnimationState not found.");
+            Debug.Log("SkeletonAnimation or AnimationState not found.");
             return;
         }
 
-        if (tracks == null || tracks.Length == 0)
+        if (rtracks == null || rtracks.Length == 0)//确保没有动画在组内时，不会报错
         {
-            Debug.LogWarning("Tracks array is null or empty.");
+            Debug.Log("Tracks array is null or empty.");
             return;
         }
 
         // 设置第一个动画
-        skeletonObj.AnimationState.SetAnimation(0, tracks[0], loop);
+        skeletonObj.AnimationState.SetAnimation(0, rtracks[0], loop);
        // Debug.Log(tracks);
-        if(tracks.Length == 1) return; // 如果只有一个动画，直接返回（不需要添加到队列中）
+        if(rtracks.Length == 1) return; // 如果只有一个动画，直接返回（不需要添加到队列中）
         // 将剩余的动画依次添加到队列中
-        for (int i = 1; i < tracks.Length; i++)
+        for (int i = 1; i < rtracks.Length; i++)
         {
-            skeletonObj.AnimationState.AddAnimation(0, tracks[i], loop, 0);
+            skeletonObj.AnimationState.AddAnimation(0, rtracks[i], loop, 0);
         }
     }
 

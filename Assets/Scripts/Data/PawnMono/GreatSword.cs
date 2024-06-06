@@ -17,15 +17,15 @@ public class GreatSword : BaseAction
     // Start is called before the first frame update
     void Start()
     {
-       // UniteSave = this.GetComponent<PawnData>().Unites;
+        // UniteSave = this.GetComponent<PawnData>().Unites;
     }
 
     // Update is called once per frame
     void Update()
     {
-       
+
     }
-   
+
     public override void AttackJudg()
     {
         GameObject target;
@@ -33,10 +33,10 @@ public class GreatSword : BaseAction
         GameManager.Instance.unitesGridMap.GetGridXZ(this.gameObject.transform.position, out int x, out int z);
         if (isAttacker)//ÊÇ¹¥»÷·½
         {
-            for(var i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
-               target = GameManager.Instance.unitesGridMap.GetValue(x + UniteSave.Range, z + i);
-                if(target != null)
+                target = GameManager.Instance.unitesGridMap.GetValue(x + UniteSave.Range, z + i);
+                if (target != null)
                 {
                     if (!target.GetComponent<BaseAction>().isAttacker)
                     {
@@ -69,7 +69,7 @@ public class GreatSword : BaseAction
            GameManager.Instance.AttackSettlement(this.gameObject, targets);
            AnimaSet(targets);
          }*/
-       
+
         List<GameObject> targetList = new List<GameObject>(targets);
         targetList.RemoveAll(target => target == null);
 
@@ -88,18 +88,18 @@ public class GreatSword : BaseAction
     private void AnimaSet(GameObject[] target)
     {
         Spine2DSkinList spineA = this.GetComponent<Spine2DSkinList>();
-        string[] atktracks = new string[] { "Attacks/Queen_Attack" };
-        string[] targettracks = new string[] { "Hit/Hit" };
-        spineA.SetAnimation(atktracks, false);
-        for(var i = 0; i < target.Length; i++)
+        string atktracks = "Attacks/Queen_Attack";
+        string targettracks = "Hit/Hit";
+        spineA.SetAnimaList(atktracks);
+        for (var i = 0; i < target.Length; i++)
         {
-          target[i].GetComponent<Spine2DSkinList>().SetAnimation(targettracks, false);           
+            target[i].GetComponent<Spine2DSkinList>().SetAnimaList(targettracks);
         }
     }
 
     protected override void OnDisable()
     {
-        base.OnDisable();  
+        base.OnDisable();
         EventManager.MeleeAttack -= Attack;
     }
 

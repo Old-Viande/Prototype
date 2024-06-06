@@ -66,8 +66,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 718074e4e56a5404e824bf8e6571ea7d, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: 241278786, guid: 0cd7fc08d96533845a0b2c43804b7018, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -142,8 +142,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 718074e4e56a5404e824bf8e6571ea7d, type: 3}
-  m_Type: 0
+  m_Sprite: {fileID: -1169911038, guid: 0cd7fc08d96533845a0b2c43804b7018, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -542,9 +542,10 @@ MonoBehaviour:
   skins:
   - Characters/Knight
   - Armor/Default_A
-  - Shield/Cape
+  - default
   tracks:
   - Attacks/King_Attack
+  - Finish Attack/King_Finish
 --- !u!114 &110129572226378705
 MonoBehaviour:
   m_ObjectHideFlags: 0

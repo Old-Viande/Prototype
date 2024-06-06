@@ -18,8 +18,15 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private EventSystem eventSystem;  // 用于获取当前的事件系统
     private Camera mainCamera;  // 主相机
 
+    public AudioSource audioSource;
+    public AudioClip[] SoundList;
+
     private void OnEnable()
     {
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
         // 确保原始对象有一个 CanvasGroup 组件
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
@@ -48,7 +55,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         }
         else
         {
-            Debug.LogError("Parent Canvas not found.");
+            //Debug.LogError("Parent Canvas not found.");
         }
         InfPanel = Resources.Load<GameObject>("Prefab/UI/InfPanel");
         // 获取当前的事件系统
@@ -136,7 +143,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
 
 
 
-    public void OnEndDrag(PointerEventData eventData)
+    public void OnEndDrag(PointerEventData eventData)//拖拽结束
     {
         if (dragCopy != null) Destroy(dragCopy);
         canvasGroup.alpha = 1;
@@ -145,7 +152,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         {
             Vector3 point = GetObjectUnderMouse().transform.position;
             if (GameManager.Instance.unitesGridMap.GetValue(point) == null)
-                PawnDrag(obj, point);
+                PawnDrag(obj, point);//拖拽结束后，生成单位
         }
 
     }
@@ -153,7 +160,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private void PawnDrag(GameObject obj, Vector3 point)
     {
         GameManager.Instance.floorGridMap.GetGridXZ(point, out int x, out int z);
-        if (TurnBaseFSM.Instance.currentStateType == States.AttackPlacement)
+        if (TurnBaseFSM.Instance.currentStateType == States.AttackPlacement|| TurnBaseFSM.Instance.currentStateType == States.AttackReinforce)
         {
 
             if (x <= 3 && z <= 2)
@@ -163,7 +170,8 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
                 PawnSet(pawn);
                 //这个字典的key是世界坐标值，value是对应的单位
                 GameManager.Instance.unitesGridMap.SetValue(pawn.transform.position, pawn);
-                GameManager.Instance.AttackPawnPoolSave(this.name, this.gameObject);
+                //GameManager.Instance.AttackPawnPoolSave(this.name, this.gameObject); 
+                GameManager.Instance.AbandonedPoolSave(this.name, this.gameObject);
             }
             else
             {
@@ -173,7 +181,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             }
 
         }
-        else if (TurnBaseFSM.Instance.currentStateType == States.DefencePlacement)
+        else if (TurnBaseFSM.Instance.currentStateType == States.DefencePlacement|| TurnBaseFSM.Instance.currentStateType == States.DefenceReinforce)
         {
 
             if (x > 6 && z <= 2)
@@ -182,7 +190,8 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
                 GameObject pawn = Instantiate(obj, point, Quaternion.identity);
                 PawnSet(pawn);
                 GameManager.Instance.unitesGridMap.SetValue(pawn.transform.position, pawn);
-                GameManager.Instance.DefencePawnPoolSave(this.name, this.gameObject);
+                //GameManager.Instance.DefencePawnPoolSave(this.name, this.gameObject);
+                GameManager.Instance.AbandonedPoolSave(this.name, this.gameObject);
             }
             else
             {
@@ -208,6 +217,16 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         PawnAnimationSet(pawn, this.GetComponent<PawnData>());
         pawn.GetComponent<PawnData>().PawnSet();//设置脚本中的防御值和单位名称
         GameManager.Instance.AddComponent(pawn, type);
+        if (pawn.GetComponent<BaseAction>().isAttacker)
+        {
+            GameManager.Instance.atkPawnDic.Add(name, pawn);
+            GameManager.Instance.atkPawnSave.Add(name, pawn);
+        }
+        else
+        {
+            GameManager.Instance.defPawnDic.Add(name, pawn);
+            GameManager.Instance.defPawnSave.Add(name, pawn);
+        }
         pawn.name = this.name;
     }
     private void PawnAnimationSet(GameObject Pawn, PawnData unite)
@@ -215,10 +234,21 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         string[] setskins = new string[3];
         setskins[0] = AnimationName(unite.Weaopn.Name);
         setskins[1] = AnimationName(unite.Armor.Name);
-        setskins[2] = "Shield/Cape";
+        if (unite.Armor.Name!= null)
+        {
+            setskins[2] = "Shield/Cape";
+        }
+        else { setskins[2] = "default"; }
         Pawn.GetComponent<Spine2DSkinList>().skins = setskins;
     }
+    private void SoundPlay()
+    {
+        // 生成一个随机索引
+        int randomIndex = UnityEngine.Random.Range(0, SoundList.Length);
 
+        // 播放随机选择的声音
+        audioSource.PlayOneShot(SoundList[randomIndex]);
+    }
     public string AnimationName(string name)
     {
         switch (name)
@@ -241,6 +271,8 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
                 return "Armor/Light_A";
             case "PlateArmor":
                 return "Armor/Heavy_A";
+            case null:
+                return "Armor/Default_A";
         }
         return null;
     }
@@ -253,7 +285,7 @@ public class OnDrawPawn : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         foreach (RaycastHit h in hit)
         {
             Debug.Log(h.collider.gameObject.name);
-            if (h.collider.gameObject.name == "Plane(Clone)")
+            if (h.collider.gameObject.name.Contains("Plane"))
             {
                 return h.collider.gameObject;
             }

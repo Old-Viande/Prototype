@@ -20,6 +20,13 @@ public class CardDrawFun : Singleton<CardDrawFun>
     public GameObject DetailPanel;
     public GameObject DrawCount;
 
+    public AudioSource audioSource;
+    public AudioClip buttonClickSound;
+    public AudioClip[] cardDrawSoundList;
+
+    public GameObject AtkIcon;
+    public GameObject DefIcon;
+
     public float duration = 1.0f; // 旋转动画的持续时间
     public int flipTimes = 3; // 硬币旋转的次数
     private Unites unitModol;
@@ -31,14 +38,51 @@ public class CardDrawFun : Singleton<CardDrawFun>
 
     public Dictionary<string, GameObject> UniteSave = new Dictionary<string, GameObject>();
     public Dictionary<string, GameObject> ArmorSave = new Dictionary<string, GameObject>();
-
+    public List<Sprite> Unitesprites = new List<Sprite>();
+    public List<Sprite> Armorsprites = new List<Sprite>();
 
     // Start is called before the first frame update
+    private void OnEnable()
+    {
+        if (TurnBaseFSM.Instance.currentStateType == States.AttackDrawPile || TurnBaseFSM.Instance.currentStateType == States.AttackDrawRound)
+        {
+            AtkIcon.SetActive(true);
+            DefIcon.SetActive(false);
+        }
+        else if (TurnBaseFSM.Instance.currentStateType == States.DefenceDrawPile || TurnBaseFSM.Instance.currentStateType == States.DefenceDrawRound)
+        {
+            AtkIcon.SetActive(false);
+            DefIcon.SetActive(true);
+        }
+        TextInfoSave();
+    }
     void Start()
     {
         drewArmor.onClick.AddListener(DrewArmor);
         drewWeapon.onClick.AddListener(DrewWeapon);
-        finish.onClick.AddListener(DrawCardOver);
+       // finish.onClick.AddListener(DrawCardOver);
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+       /* drewArmor.onClick.AddListener(() =>
+        {
+            DrewArmor();
+            SoundPlay();
+        });
+
+        drewWeapon.onClick.AddListener(() =>
+        {
+            DrewWeapon();
+            SoundPlay();
+        });*/
+
+        finish.onClick.AddListener(() =>
+        {
+            DrawCardOver();
+            audioSource.PlayOneShot(buttonClickSound);
+        });
 
         // 确保主摄像机和EventSystem已正确设置
         if (mainCamera == null)
@@ -103,24 +147,34 @@ public class CardDrawFun : Singleton<CardDrawFun>
                  DetailPanel.GetComponent<RectTransform>().position = new Vector3(Input.mousePosition.x - 150, Input.mousePosition.y-30, 0);
              }*/
 
-             Unites unit = obj.GetComponent<CardData>().unites;
-             if (unit is Weapon)
-             {
-                 DetailPanel.GetComponentInChildren<TextMeshProUGUI>().text = "<sprite=0><color=red> Damage : " + unit.Damage + "\r\n<sprite=1><color=green> Defence :" + unit.Defence + "\r\n" +
-                   TextShow(unit);
+            Unites unit = obj.GetComponent<CardData>().unites;
+            if (unit is Weapon)
+            {
+                DetailPanel.GetComponentInChildren<TextMeshProUGUI>().text = "<sprite=0><color=red> Damage : " + unit.Damage + "\r\n<sprite=1><color=green> Defence :" + unit.Defence + "\r\n" +
+                  TextShow(unit);
 
 
-             }
-             else if (unit is Armor)
-             {
-                 DetailPanel.GetComponentInChildren<TextMeshProUGUI>().text = "<sprite=1><color=green> Defence : " + unit.Defence + "\r\n<sprite=2><color=blue> Speed : " + unit.Speed + "\r\n" +
-                     TextShow(unit);
-             }
+            }
+            else if (unit is Armor)
+            {
+                DetailPanel.GetComponentInChildren<TextMeshProUGUI>().text = "<sprite=1><color=green> Defence : " + unit.Defence + "\r\n<sprite=2><color=blue> Speed : " + unit.Speed + "\r\n" +
+                    TextShow(unit);
+            }
         }
         else
         {
             DetailPanel.SetActive(false);
         }
+    }
+
+    // 在SoundPlay方法中添加随机播放声音的逻辑
+    private void SoundPlay()
+    {
+        // 生成一个随机索引
+        int randomIndex = UnityEngine.Random.Range(0, cardDrawSoundList.Length);
+
+        // 播放随机选择的声音
+        audioSource.PlayOneShot(cardDrawSoundList[randomIndex]);
     }
     private string TextShow(Unites unit)
     {
@@ -169,6 +223,7 @@ public class CardDrawFun : Singleton<CardDrawFun>
             return;
         }
         DrawTimes--;
+        SoundPlay();
         RectTransform rectTransform = drewWeapon.GetComponent<RectTransform>();
         drewWeapon.onClick.RemoveListener(DrewWeapon);
         rectTransform.DORotate(new Vector3(0, 360 * flipTimes, 0), duration, RotateMode.FastBeyond360)
@@ -192,6 +247,7 @@ public class CardDrawFun : Singleton<CardDrawFun>
             return;
         }
         DrawTimes--;
+        SoundPlay();
         RectTransform rectTransform = drewArmor.GetComponent<RectTransform>();
         drewArmor.onClick.RemoveListener(DrewArmor);
         rectTransform.DORotate(new Vector3(0, 360 * flipTimes, 0), duration, RotateMode.FastBeyond360)
@@ -226,12 +282,69 @@ public class CardDrawFun : Singleton<CardDrawFun>
         TextInfoSave();
         unitModol = GameManager.Instance.currentUnit;
         obj.GetComponent<CardData>().unites = unitModol;
+        if (unitModol is Weapon)
+        {
+            SetImageWeapon(obj, unitModol.Name);
+        }
+        else if (unitModol is Armor)
+        {
+            SetImageArmor(obj, unitModol.Name);
+        }
         obj.GetComponent<CardData>().cardName = unitModol.Name;
+    }
+    public void SetImageWeapon(GameObject obj, string name)
+    {
+        switch (name)
+        {
+            case "Sword":
+                obj.GetComponent<Image>().sprite = Unitesprites[0];
+                break;
+            case "Halberd":
+                obj.GetComponent<Image>().sprite = Unitesprites[1];
+                break;
+            case "GreatSword":
+                obj.GetComponent<Image>().sprite = Unitesprites[2];
+                break;
+            case "Spear":
+                obj.GetComponent<Image>().sprite = Unitesprites[3];
+                break;
+            case "LongBow":
+                obj.GetComponent<Image>().sprite = Unitesprites[4];
+                break;
+            case "CrossBow":
+                obj.GetComponent<Image>().sprite = Unitesprites[5];
+                break;
+
+
+        }
+    }
+    public void SetImageArmor(GameObject obj, string name)
+    {
+        switch (name)
+        {
+            case "Cape":
+                obj.GetComponent<Image>().sprite = Armorsprites[0];
+                break;
+            case "Breastplate":
+                obj.GetComponent<Image>().sprite = Armorsprites[1];
+                break;
+            case "PlateArmor":
+                obj.GetComponent<Image>().sprite = Armorsprites[2];
+                break;
+        }
     }
     private void TextInfoSave()
     {
-        DrawCount.GetComponentInChildren<TextMeshProUGUI>().text = DrawTimes + " card draws left.";
-
+        string text = null;
+        if (TurnBaseFSM.Instance.currentStateType == States.AttackDrawPile || TurnBaseFSM.Instance.currentStateType == States.AttackDrawRound)
+        {
+           text = "You're the attacker. This is your turn to draw cards.";
+        }
+        else if (TurnBaseFSM.Instance.currentStateType == States.DefenceDrawPile || TurnBaseFSM.Instance.currentStateType == States.DefenceDrawRound)
+        {
+            text = "You're the defender, This is your turn to draw cards..";
+        }
+        DrawCount.GetComponentInChildren<TextMeshProUGUI>().text = DrawTimes + " card draws left." + "\n" + text;
     }
 
     public string GenerateUniqueName(GameObject obj)
@@ -251,27 +364,42 @@ public class CardDrawFun : Singleton<CardDrawFun>
         return GenerateUniqueName(obj);
     }
     public void DrawCardOver()
-    {//结束抽卡 判断当前回合状态 以不同的状态存入不同的池中
-        if (TurnBaseFSM.Instance.currentStateType == States.AttackDrawPile)
+    {
+        if (DrawTimes > 0)
+        {
+            return;
+        }
+        //结束抽卡 判断当前回合状态 以不同的状态存入不同的池中
+        if (TurnBaseFSM.Instance.currentStateType == States.AttackDrawPile || TurnBaseFSM.Instance.currentStateType == States.AttackDrawRound)
         {
             foreach (var item in UniteSave)
             {
-                if (item.Value.activeSelf == false)
-                    continue;
+                //if (item.Value.activeSelf == false)//这行代码注释掉了也没有任何反应啊？
+                //    continue;
 
                 GameManager.Instance.AttackUnitePoolSave(item.Key, item.Value);
             }
             foreach (var item in ArmorSave)
             {
-                if (item.Value.activeSelf == false)
-                    continue;
+                //if (item.Value.activeSelf == false)
+                //    continue;
                 GameManager.Instance.AttackArmorPoolSave(item.Key, item.Value);
             }
-            Debug.Log(GameManager.Instance.AttackUnitePool.poolDictionary.Count);
-            Debug.Log(GameManager.Instance.AttackArmorPool.poolDictionary.Count);
-            TurnBaseFSM.Instance.ChangeState(States.AttackConfiguration);//要是攻击方的回合就进入攻击方的后续状态
+            //Debug.Log(GameManager.Instance.AttackUnitePool.poolDictionary.Count);
+            // Debug.Log(GameManager.Instance.AttackArmorPool.poolDictionary.Count);
+            if (TurnBaseFSM.Instance.currentStateType == States.AttackDrawPile)
+            {
+                TurnBaseFSM.Instance.ChangeState(States.AttackConfiguration);//要是攻击方的回合就进入攻击方的后续状态
+            }
+            else
+            {
+                TurnBaseFSM.Instance.ChangeState(States.AttackConfigurationRound);
+            }
+            //记得清空字典
+            UniteSave.Clear();
+            ArmorSave.Clear();
         }
-        else if (TurnBaseFSM.Instance.currentStateType == States.DefenceDrawPile)
+        else if (TurnBaseFSM.Instance.currentStateType == States.DefenceDrawPile || TurnBaseFSM.Instance.currentStateType == States.DefenceDrawRound)
         {
             foreach (var item in UniteSave)
             {
@@ -285,9 +413,19 @@ public class CardDrawFun : Singleton<CardDrawFun>
                     continue;
                 GameManager.Instance.DefenceArmorPoolSave(item.Key, item.Value);
             }
-            Debug.Log(GameManager.Instance.DefenceUnitePool.poolDictionary.Count);
-            Debug.Log(GameManager.Instance.DefenceArmorPool.poolDictionary.Count);
-            TurnBaseFSM.Instance.ChangeState(States.DefenceConfiguration);//要是防守方的回合就进入防守方的后续状态
+            // Debug.Log(GameManager.Instance.DefenceUnitePool.poolDictionary.Count);
+            //Debug.Log(GameManager.Instance.DefenceArmorPool.poolDictionary.Count);
+            if (TurnBaseFSM.Instance.currentStateType == States.DefenceDrawPile)
+            {
+                TurnBaseFSM.Instance.ChangeState(States.DefenceConfiguration);//要是防守方的回合就进入防守方的后续状态
+            }
+            else
+            {
+                TurnBaseFSM.Instance.ChangeState(States.DefenceConfigurationRound);
+            }
+            //记得清空字典
+            UniteSave.Clear();
+            ArmorSave.Clear();
         }
     }
 
@@ -299,7 +437,7 @@ public class CardDrawFun : Singleton<CardDrawFun>
         uiRaycaster.Raycast(pointerEventData, results);
         foreach (RaycastResult result in results)
         {
-           // Debug.Log("UI Element: " + result.gameObject.name);
+            // Debug.Log("UI Element: " + result.gameObject.name);
             if (result.gameObject.name.Contains("ArmorCard") || result.gameObject.name.Contains("UniteCard"))
             {
                 return result.gameObject;

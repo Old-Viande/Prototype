@@ -11,16 +11,23 @@ public class BaseAction : MonoBehaviour
     public bool canAttack;
     protected virtual void OnEnable()
     {
-        if (TurnBaseFSM.Instance.currentStateType == States.AttackPlacement)
+        if (TurnBaseFSM.Instance.currentStateType == States.AttackPlacement|| TurnBaseFSM.Instance.currentStateType == States.AttackReinforce)
         {
             isAttacker = true;
         }
-        else if (TurnBaseFSM.Instance.currentStateType == States.DefencePlacement)
+        else if (TurnBaseFSM.Instance.currentStateType == States.DefencePlacement|| TurnBaseFSM.Instance.currentStateType == States.DefenceReinforce)
         {
             isAttacker = false;
         }
         //获取自己的位置，将自己的位置添加到攻击列表中
         UniteSave = this.GetComponent<PawnData>().Unites;
+        EventManager.MoveReady += MoveReady;
+        EventManager.Move += Move;
+        EventManager.RoundEnd += RoundEnd;
+        EventManager.PlayAnimation += AnimaPlay;
+    }
+    public void MoveReady()
+    {
         GameManager.Instance.unitesGridMap.GetGridXZ(this.transform.position, out int x, out int z);
         if (isAttacker)
         { //只有攻击单位才会添加到攻击列表中
@@ -30,9 +37,6 @@ public class BaseAction : MonoBehaviour
         {//防御单位添加到防御列表中
             GameManager.Instance.DefenceMovelis.Add(new Vector2(x, z), this.gameObject);
         }
-        EventManager.Move += Move;
-        EventManager.RoundEnd += RoundEnd;
-       // EventManager.Idel += SetIdle;
     }
     public void Move()
     {
@@ -47,12 +51,6 @@ public class BaseAction : MonoBehaviour
             this.transform.DOMove(target, 2);
         }
     }
-
-    //public void SetIdle()
-    //{
-    //    string[] idel = { "Idel/Idel" };
-    //    this.GetComponent<Spine2DSkinList>().SetAnimation(idel, true);
-    //}
     public void Attack()
     {
         GameManager.Instance.Attacklist.Add(new KeyValuePair<int, GameObject>(UniteSave.Speed, this.gameObject));
@@ -62,6 +60,10 @@ public class BaseAction : MonoBehaviour
     {
 
     }
+    public void AnimaPlay()
+    {
+        this.GetComponent<Spine2DSkinList>().PlayAnimation();
+    }
     private void RoundEnd()
     {
         this.GetComponent<PawnData>().Defence = this.GetComponent<PawnData>().Unites.Defence;
@@ -69,16 +71,19 @@ public class BaseAction : MonoBehaviour
 
     protected virtual void OnDisable()
     {
+        Debug.Log(this.UniteSave.Name+"stop stop stop on disable"+" isattack:?"+ isAttacker);
+        EventManager.MoveReady -= MoveReady;
         EventManager.Move -= Move;
         EventManager.RoundEnd -= RoundEnd;
-        GameManager.Instance.unitesGridMap.GetGridXZ(this.transform.position, out int x, out int z);
+        EventManager.PlayAnimation -= AnimaPlay;
+      /*  GameManager.Instance.unitesGridMap.GetGridXZ(this.transform.position, out int x, out int z);
         if (isAttacker)
         {
         GameManager.Instance.AttackMovelis.Remove(new Vector2(x, z));
         }
-        else
+        else if(!isAttacker)
         {
          GameManager.Instance.DefenceMovelis.Remove(new Vector2(x, z));
-        }
+        }*/
     }
 }

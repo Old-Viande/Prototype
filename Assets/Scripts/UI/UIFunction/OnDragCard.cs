@@ -13,7 +13,18 @@ public class OnDragCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     private PointerEventData pointerEventData;  // 用于存储指针事件数据
     private EventSystem eventSystem;  // 用于获取当前的事件系统
 
+    public AudioSource audioSource;
+    public AudioClip[] SoundList;
+
     private void OnEnable()
+    {
+        CardDragInit();
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+    }
+    public void CardDragInit()
     {
         // 确保原始对象有一个 CanvasGroup 组件
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
@@ -38,12 +49,12 @@ public class OnDragCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             graphicRaycaster = parentCanvas.GetComponent<GraphicRaycaster>();
             if (graphicRaycaster == null)
             {
-                Debug.LogError("GraphicRaycaster component not found on parent Canvas.");
+                Debug.Log("GraphicRaycaster component not found on parent Canvas.");
             }
         }
         else
         {
-            Debug.LogError("Parent Canvas not found.");
+            Debug.Log("Parent Canvas not found.");
         }
 
         // 获取当前的事件系统
@@ -52,9 +63,7 @@ public class OnDragCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
         {
             Debug.LogError("EventSystem not found.");
         }
-
     }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (configPanelTransform == null)
@@ -181,7 +190,7 @@ public class OnDragCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
     public void OnEndDrag(PointerEventData eventData)
     {
         Debug.Log("Drag ended");
-
+        SoundPlay();
         GameObject uiElementUnderMouse = GetUIElementUnderMouse();
         if (uiElementUnderMouse != null)
         {
@@ -228,6 +237,15 @@ public class OnDragCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             }
         }
         return null;
+    }
+
+    private void SoundPlay()
+    {
+        // 生成一个随机索引
+        int randomIndex = UnityEngine.Random.Range(0, SoundList.Length);
+
+        // 播放随机选择的声音
+        audioSource.PlayOneShot(SoundList[randomIndex]);
     }
 
 
